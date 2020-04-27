@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Super mega video nadzor</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="Index.css">
+    <link rel="stylesheet" href="prism.css">
+
+</head>
+
+
+<body>
+
+    <nav class="navbar navbar-expand-sm bg-dark fixed-top">
+
+       <a onclick="document.documentElement.scrollTop=0"> <h1 class="navbar-brand text-white logo">Super mega security</h1></a>
+
+      
+       
+       <ul class="navbar-nav">
+            <li class="nav-item zgornjinaslovi">
+                <a class="nav-link navig zgornjinaslovi" onClick="document.getElementById('Introdukcija').scrollIntoView()"
+                >Introdukcija</a>
+            </li>
+            <li class="nav-item zgornjinaslovi">
+                <a class="nav-link navig" onClick="document.getElementById('videorecorder').scrollIntoView()"
+                >Kamera</a>
+            </li>
+            <li class="nav-item zgornjinaslovi">
+                <a class="nav-link navig" onClick="document.getElementById('videomonitor').scrollIntoView()"
+                >Video player</a>
+            </li>
+            <li class="nav-item zgornjinaslovi">
+                <a class="nav-link navig" onClick="document.getElementById('spletnastran').scrollIntoView()"
+            >Spletna stran</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+        <li>
+            <a onclick="darkMode()"> <img id="icon" src="Slike\day.png" alt="Darkmode" width="40px" style="margin-right: 10px;"></a>
+        </li>
+    </ul>
+    </nav>
+       
+
+    <div class="row">
+        <div class="col">
+            <button class="hvr-sweep-to-right btn"
+                onClick="document.getElementById('videorecorder').scrollIntoView();"><img id="video" src="slike/videorecorder.png"
+                    alt="leva"></button>
+        </div>
+        <div class="col">
+            <button class="btn hvr-sweep-to-left" onClick="document.getElementById('videomonitor').scrollIntoView();">
+                <img id="monitor" src="slike/videomonitor.png" alt="desna"></button>
+        </div>
+    </div>
+    <br id="Introdukcija">
+    <br>
+    <br>
+    <h1 class="text-center">Introdukcija</h1>
+    <br>
+    <div class="container-sm">
+
+        <p>UMS (Ultra mega security) je open-source varnostni sistem, ki dela na skoraj vseh računalnikih. Naredil ga je Tim Nahtigal 20.4.2020..
+            je lahek za uporabo, ter ima kodo dokumentirano spodaj. Ima 2 glavni funkciji: Video kamera, ter monitor. Kamera snema samo ko zaznava obraz. Ima opcijo, da 
+            zaznava celotno telo z spremenitvijo 1 komande v kodi. Monitor podpira pospešitev ter upočasnitev posnetka, zaustavitev z "Space", framestep (Z "D", če je posnetek ustavljen) 
+            z menijem, ter time stampi (prikažejo se samo, če je nekdo v sliki). 
+        </p>
+        <br>
+        <h4 class="manjsinaslov">Minimalne zahteve</h4>
+        <ul>
+            <li>Python 3.8.2</li>
+            <li>Inštaliran OpenCV 4.3.0.</li>
+            <li>Inštaliran PySimpleGUI</li>
+        </ul>
+        <p>
+
+        </p>
+    </div>
+
+    <br id="videorecorder">
+    <br>
+    <br>
+
+    <h1 class="text-center">Video rekorder</h1>
+    <div class="row">
+        <div class="col" id="velikost1">
+            <h4 class="manjsinaslov levastran">Izdelava</h4>
+            <p class="levastran">
+                Na začetku je bila naloga, narediti top, ki sledi obrazu, vendar mi ni delal pravilno python interpretator. Vendar sem že naredil kodo za zaznavanje obraza 
+                in ker je nisem hotel zbrisati sem jo hotel reciklirati. Hotel sem narediti snemalnik ter spletno aplikacijo, s katero bi lahko urejal posnetek. 
+                Izkazalo se je, da se na internetu ne more prikazati .avi video posnetke. Zato sem probal narediti v mp4, vendar (mogoče zaradi zastarele različice openCV)
+                mi ni delal enkoder (h264). Zato sem naredil video aplikacijo z PySimpleGUI. 
+             </p>
+             <br>
+             <h4 class="manjsinaslov levastran">Delovanje</h4>
+             <p class="levastran">
+                Najprej te vpraša koliko fps hočeš, da je video, vpraša te tudi rezolucijo. Če je rezolucija narobe je 480p po default. Nato začne snemati. Odpre se okno,
+                ki pokaže kaj snema. V ozadju pa shranjuje timestampe v Json datoteko. Okno se zapre z Q. Datoteka, ki jo ustvari se imenuje video.avi., ki jo rabi Video player.
+             </p>
+
+
+        </div>
+        <pre class="col" style="min-height: 200px; overflow-y: scroll; height: 400px ;" id="koda1">
+       <code class="language-py">
+        import cv2
+        import datetime
+        import json
+        
+        filename = 'video.avi'
+        frames_per_second_string = input("Koliko slik na sekundo (12.0), hočeš snemati? (Več kot jih je hitejši je playback):")
+        
+        try:
+            frames_per_second = int(frames_per_second_string)
+        except ValueError:
+            print("Število more biti intinger")
+            frames_per_second_string = input("Koliko slik na sekundo (12.0), hočeš snemati?"
+                                             "(Več kot jih je hitejši je playback):")
+            frames_per_second = int(frames_per_second_string)
+        res = input("S katero rezolucijo hočeš snemati? (480p, 720p, 1080p)")
+        print("Ko se okno odpre, ga lahko zapreš z Q.")
+        
+        
+        def change_res(cap, width, height):
+            cap.set(3, width)
+            cap.set(4, height)
+        
+        
+        STD_DIMENSIONS = {
+            "480p": (640, 480),
+            "720p": (1280, 720),
+            "1080p": (1920, 1080),
+        }
+        
+        
+        def get_dims(cap, res="1080p"):  # spremeni rezolucijo, če je vnešena narobna bo rezolucija 480p
+            width, height = STD_DIMENSIONS["480p"]
+            if res in STD_DIMENSIONS:
+                width, height = STD_DIMENSIONS[res]
+        
+            change_res(cap, width, height)
+            return width, height
+        
+        
+        fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+        face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt.xml')
+        # datoteka za zaznavanje človeka: "https://github.com/opencv/opencv/tree/master/data/haarcascades"
+        
+        
+        cap = cv2.VideoCapture(0)  # kamera 1
+        
+        out = cv2.VideoWriter(filename, fourcc, frames_per_second, get_dims(cap, res))  # writer za .mp4
+        
+        pastfacesx = 3
+        x = 1
+        cas = datetime.datetime.now()
+        cas_string = str(datetime.datetime.now())
+        prejsni_cas = datetime.datetime.now()
+        
+        casi_json = []
+        
+        timestampi_frame = [0]
+        stevilo_frame = 0
+        
+        while cap.isOpened():
+        
+            _, frame = cap.read()
+        
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+        
+            for (x, y, w, h) in faces:
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 3)
+        
+            if x != pastfacesx:
+        
+                frame = cv2.putText(frame, cas_string, (10, 50), cv2.FONT_HERSHEY_PLAIN, 1, (0, 255, 255), 2, cv2.LINE_AA)
+                stevilo_frame = stevilo_frame + 1
+                out.write(frame)
+                cv2.imshow('img', frame)
+        
+                if cas > prejsni_cas:
+                    casi_json.append(str(datetime.datetime.now()))
+                    timestampi_frame.append(stevilo_frame)
+                    print(cas_string)
+                    prejsni_cas = cas + datetime.timedelta(seconds=15)
+        
+            x = pastfacesx
+            cv2.imshow('img', frame)
+            cas_string = str(datetime.datetime.now())
+            cas = datetime.datetime.now()
+        
+            if cv2.waitKey(1) & 0xFF == ord('q'):  # ko pritisneš q se vse zapre
+                break
+        
+        stevilo_json = 0
+        json_dictionary = {}
+        
+        for i in casi_json:
+            json_dictionary[i] = timestampi_frame[stevilo_json]
+        
+            stevilo_json = stevilo_json + 1
+        
+        json_file = open("Casi.json", "w", encoding="utf-8")
+        json.dump(json_dictionary, json_file, ensure_ascii=False)
+        
+        json_file.close()
+        out.release()  # ugasne vse
+        cap.release()
+        cv2.destroyAllWindows()
+  </code>
+</pre>
+    </div>
+    </div>
+
+    <br>
+
+    <h1 class="text-center" id="videomonitor">Video player</h1>
+
+    <div class="row">
+        <div class="col">
+            <pre class="col" style="min-height: 200px; overflow-y: scroll; height: 400px;" id="koda2">
+      <code class="language-py">
+        import cv2
+        import time
+        import PySimpleGUI as sg
+        import json
+        
+        jonny_file = open("Casi.json")
+        
+        casi = json.load(jonny_file)
+        
+        jonny_file.close()
+        
+        sg.theme('DarkAmber')
+        
+        layout = [[sg.Button('Framestep')]]
+        
+        for cas in casi:
+            if cas != 0:
+                dodaj = [sg.Button(cas)]
+                layout.append(dodaj)
+        
+        window = sg.Window('json', layout)
+        
+        
+        def nothing(x):
+            pass
+        
+        
+        cv2.namedWindow("Ultra mega camera")
+        # create switch for ON/OFF functionality
+        
+        cv2.createTrackbar("hitrost/fps", 'Ultra mega camera', 12, 60, nothing)
+        
+        cap = cv2.VideoCapture("video.avi")
+        
+        nr_of_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        cv2.createTrackbar("Video", "Ultra mega camera", 0, nr_of_frames, nothing)
+        
+        switch = '0 : OFF \n1 : ON'
+        cv2.createTrackbar(switch, 'Ultra mega camera', 0, 1, nothing)
+        
+        while cap.isOpened():
+        
+            fps = cv2.getTrackbarPos("hitrost/fps", "Ultra mega camera")
+        
+            if fps != 0:
+        
+                rez, frame = cap.read()
+        
+                if rez:
+                    cv2.imshow('Ultra mega camera', frame)
+                    cv2.setTrackbarPos("Video", "Ultra mega camera", int(cap.get(cv2.CAP_PROP_POS_FRAMES)))
+        
+                    time.sleep(1 / fps)
+                else:
+                    break
+        
+            if cv2.waitKey(1) & 0xFF == ord(" "):
+                while cv2.waitKey(1) & 0xFF == ord("d"):
+                    pass
+                while True:
+                    if cv2.waitKeyEx(1) & 0xFF == ord("d"):
+        
+                        rez, frame = cap.read()
+        
+                        if rez:
+                            cv2.imshow('Ultra mega camera', frame)
+        
+                        else:
+                            cv2.destroyAllWindows()
+                            quit()
+                        while cv2.waitKey(1) & 0xFF == ord("d"):
+                            pass
+                    if cv2.waitKey(1) & 0xFF == ord(" "):
+                        break
+        
+            while cv2.getTrackbarPos(switch, 'Ultra mega camera'):
+        
+                event, values = window.read()
+        
+                if event in (None, "Framestep"):  # if user closes window or clicks cancel
+                    break
+                cap.set(cv2.CAP_PROP_POS_FRAMES, int(casi.get(event)))
+                _, frame = cap.read()
+                cv2.imshow("Ultra mega camera", frame)
+                cv2.setTrackbarPos("Video", "Ultra mega camera", int(cap.get(cv2.CAP_PROP_POS_FRAMES)))
+        
+        window.close()
+        cv2.destroyAllWindows()
+ </code>
+</pre>
+        </div>
+        <div class="col">
+            <h4 class="manjsinaslov">Izdelava</h4>
+            <p>
+                Izdelan je bil za gledanje video posnetka. Cil je bil pohitritev ter upočasnitev posnetka, ustaviti posnetek, framestep ter skakanje po videjih preko timestampov. 
+                Če, bi delal še enkrat/ imel več časa, bi se naučil tkinter knjižnico, namesto, da bi naredil video z openCV in PySimpleGUI. Odločil sem se za PySimpleGUI 
+                vsaj sem gledal tkinter knjižnico, pozno zvečer in sem težko razmišljal. 
+            </p>
+            <br>
+            <h4 class="manjsinaslov">Delovanje</h4>
+            <p>
+                Ko ga zažnemo se iz datoteke "Casi.json" naložijo timestampi. Nato se odpre okno z 3 sliderji. Sliderji so za hitros, kje je posnetek ter za odpreti, 
+                PySimpleGUI UI. Posnetek se lahko ustavi z "Presledkom". Na UIju so prikazani timestampi, ter gumb za framestep. Barva UIja je rjavo rumena, vsaj se 
+                mi je zdela lepa. 
+            </p>
+
+        </div>
+    </div>
+
+    <br id="spletnastran">
+    <br>
+    <br>
+
+    <h1 class="text-center">Spletna stran</h1>
+    <div class="container-sm">
+        <p>
+            Spletna stran je bila narejena, da je podobna kot mešanica med Valorant , openCV ter drugih podobnih spletnih straneh. Glavna iziva sta bila, zgornja gumba
+            ter prikaz kode. Koda je dolga okoli 200 vrstic in jaz sem jo hotel obarvati. To sem naredil z knjižnico za CSS, ki se imenuje prism. Zgornja gumba sem hotel 
+            narediti podobna kot na spletni strani Valarant igrice, ki je prišla ven pred nekaj dnevi (In obožujem tiste gumbe). To sem naredil z knjižnjico poimenovano
+            Hover.css. Ni bila perfektna vendar mi je bil rezultat všeč. 
+        </p>
+    </div>
+    <div class="footer">
+<br>
+<br>
+    </div>
+    <div class="container-fluid bg-dark text-center text-white">
+
+
+        ©Copyright Tim Nahtigal <br>
+        <a href="https://github.com/TimNahtigal" class="footerlink">https://github.com/TimNahtigal</a>
+
+    </div>
+    <script src="prism.js"></script>
+    <script>
+        function darkMode() {
+           var element = document.body;
+           element.classList.toggle("dark-mode");
+
+           if (document.documentElement.style.getPropertyValue("--barvaManjsiNaslovi")!= "#ff7ab7"){
+
+            document.documentElement.style.setProperty("--barvaZgoriScroll", "#fd76ff", "")
+            document.documentElement.style.setProperty("--barvaManjsiNaslovi", "#ff7ab7", "")
+            document.documentElement.style.setProperty("--barvaFooterLink", "#de709d", "")
+            document.documentElement.style.setProperty("--sweepAnime", "#dc3783", "")
+            
+            document.getElementById("video").src="slike/videorecorderDark.png"
+            document.getElementById("monitor").src="slike/videomonitorDark.png"
+            document.getElementById("icon").src="slike/night.png"
+        }
+        else{
+
+            document.documentElement.style.setProperty("--barvaZgoriScroll", "#33e7f9", "")
+            document.documentElement.style.setProperty("--barvaManjsiNaslovi", "#67aeca", "")
+            document.documentElement.style.setProperty("--barvaFooterLink", "#a2ffd4", "")
+            document.documentElement.style.setProperty("--sweepAnime", "#2098d1", "")
+            
+            document.getElementById("video").src="slike/videorecorder.png"
+            document.getElementById("monitor").src="slike/videomonitor.png"
+            document.getElementById("icon").src="slike/day.png"
+        }
+    }
+        </script>
+
+</body>
+</html>
+
