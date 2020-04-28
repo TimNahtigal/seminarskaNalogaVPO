@@ -94,16 +94,16 @@
         <div class="col" id="velikost1">
             <h4 class="manjsinaslov levastran">Izdelava</h4>
             <p class="levastran">
-                Na začetku je bila naloga, narediti top, ki sledi obrazu, vendar mi ni delal pravilno python interpretator. Vendar sem že naredil kodo za zaznavanje obraza 
+                Na začetku je bila naloga, narediti top, ki sledi obrazu, vendar mi ni delal pravilno python interpretator, ki sem ga kasneje še enkrat naložil. Vendar sem že naredil (malo površno) kodo za zaznavanje obraza 
                 in ker je nisem hotel zbrisati sem jo hotel reciklirati. Hotel sem narediti snemalnik ter spletno aplikacijo, s katero bi lahko urejal posnetek. 
                 Izkazalo se je, da se na internetu ne more prikazati .avi video posnetke. Zato sem probal narediti v mp4, vendar (mogoče zaradi zastarele različice openCV)
-                mi ni delal enkoder (h264). Zato sem naredil video aplikacijo z PySimpleGUI. 
+                mi ni delal enkoder (h264). Zato sem naredil video aplikacijo z knjižnico PySimpleGUI. 
              </p>
              <br>
              <h4 class="manjsinaslov levastran">Delovanje</h4>
              <p class="levastran">
                 Najprej te vpraša koliko fps hočeš, da je video, vpraša te tudi rezolucijo. Če je rezolucija narobe je 480p po default. Nato začne snemati. Odpre se okno,
-                ki pokaže kaj snema. V ozadju pa shranjuje timestampe v Json datoteko. Okno se zapre z Q. Datoteka, ki jo ustvari se imenuje video.avi., ki jo rabi Video player.
+                ki pokaže kaj snema. V ozadju pa shranjuje timestampe v Json datoteko (to je bilo narejeno z Json knjižnico). Okno se zapre z Q. Datoteka, ki jo ustvari se imenuje video.avi., ki jo rabi Video player.
              </p>
 
 
@@ -324,13 +324,14 @@
             <p>
                 Izdelan je bil za gledanje video posnetka. Cil je bil pohitritev ter upočasnitev posnetka, ustaviti posnetek, framestep ter skakanje po videjih preko timestampov. 
                 Če, bi delal še enkrat/ imel več časa, bi se naučil tkinter knjižnico, namesto, da bi naredil video z openCV in PySimpleGUI. Odločil sem se za PySimpleGUI 
-                vsaj sem gledal tkinter knjižnico, pozno zvečer in sem težko razmišljal. 
+                vsaj sem gledal tkinter knjižnico, pozno zvečer in sem težko razmišljal kako deluje. 
             </p>
             <br>
             <h4 class="manjsinaslov">Delovanje</h4>
             <p>
                 Ko ga zažnemo se iz datoteke "Casi.json" naložijo timestampi. Nato se odpre okno z 3 sliderji. Sliderji so za hitros, kje je posnetek ter za odpreti, 
-                PySimpleGUI UI. Posnetek se lahko ustavi z "Presledkom". Na UIju so prikazani timestampi, ter gumb za framestep. Barva UIja je rjavo rumena, vsaj se 
+                PySimpleGUI UI. Zaradi knjižnice openCV, se za razliko z tkinter knjižnico, posnetek ne more premikati nazaj (z ne preveliko porabo spomina). 
+                Posnetek se lahko ustavi z "Presledkom". Na UIju so prikazani timestampi, ter gumb za framestep. Barva UIja je rjavo rumena, vsaj se 
                 mi je zdela lepa. 
             </p>
 
